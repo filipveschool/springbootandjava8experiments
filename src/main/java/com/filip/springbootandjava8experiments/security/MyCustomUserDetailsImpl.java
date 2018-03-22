@@ -1,4 +1,4 @@
-package com.filip.springbootandjava8experiments.services.implementations;
+package com.filip.springbootandjava8experiments.security;
 
 import com.filip.springbootandjava8experiments.models.User;
 import com.filip.springbootandjava8experiments.repositories.UserRepository;
@@ -18,8 +18,10 @@ public class MyCustomUserDetailsImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Optional<User> optionalUser = userRepository.findByUsername(username);
-    optionalUser.orElseThrow(() -> new UsernameNotFoundException(username));
-    return optionalUser.get();
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UsernameNotFoundException(username);
+    }
+    return new MyUserPrincipal(user);
   }
 }

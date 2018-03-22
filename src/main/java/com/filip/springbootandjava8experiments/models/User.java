@@ -25,7 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "Users")
-public class User implements Serializable, UserDetails {
+public class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +38,12 @@ public class User implements Serializable, UserDetails {
   @Column(name = "LASTNAME")
   private String lastName;
 
+  private String email;
+
   @Column(name = "USERNAME", nullable = false, unique = true)
   private String username;
 
-  @Column(name = "PASSWORD")
+  @Column(name = "PASSWORD", length = 60)
   private String password;
 
   @Column(name = "ACTIVE")
@@ -53,6 +55,12 @@ public class User implements Serializable, UserDetails {
       joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   private Set<Role> roles;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "Users_Privileges",
+      joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+  private Set<Privilege> privileges;
 
   @Column(name = "CREATED")
   @CreationTimestamp
@@ -93,26 +101,6 @@ public class User implements Serializable, UserDetails {
     return username;
   }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
-
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return isActive();
-  }
-
   public void setUsername(String username) {
     this.username = username;
   }
@@ -131,12 +119,6 @@ public class User implements Serializable, UserDetails {
 
   public void setUpdated(Date updated) {
     this.updated = updated;
-  }
-
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return getRoles().stream().map(
-        role -> new SimpleGrantedAuthority("Role_" + role.getName())).collect(Collectors.toList());
   }
 
   public String getPassword() {
@@ -161,5 +143,22 @@ public class User implements Serializable, UserDetails {
 
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public Set<Privilege> getPrivileges() {
+    return privileges;
+  }
+
+  public void setPrivileges(
+      Set<Privilege> privileges) {
+    this.privileges = privileges;
   }
 }

@@ -1,7 +1,6 @@
 package com.filip.springbootandjava8experiments.config;
 
-import com.filip.springbootandjava8experiments.services.implementations.MyCustomUserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.filip.springbootandjava8experiments.security.MyCustomUserDetailsImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
